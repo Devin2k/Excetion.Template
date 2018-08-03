@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="tt\StatusCode.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>StatusCode.cs</LastGenOutput>
+      <LastOutputs>
+..\BusinessStatusCode.cs
+..\BusinessStatusCode.md
+..\Exceptions\BusinessException.cs
+..\Exceptions\Demo1ErrorException.cs
+..\Exceptions\Demo2ErrorException.cs
+..\Exceptions\UserAuthorityErrorException.cs
+.\StatusCode.cs
+</LastOutputs>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="tt\StatusCode.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StatusCode.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

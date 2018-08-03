@@ -1,0 +1,32 @@
+﻿<#@ Assembly Name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml" #>
+<#@ assembly name="System.Xml.dll" #>
+<#+
+public class StatusCodeMarkDownTemplate : Template
+{
+    public System.Xml.XmlNodeList Nodes;
+	public System.Xml.XmlNodeList pNodes;
+	public String Title;
+    public override string TransformText()
+    {
+#>
+## <#= Title#>
+<#+ foreach (XmlNode pnode in pNodes) { #>
+
+### <#= pnode.Attributes["Comment"].Value #>业务异常
+
+==StateCode 范围[<#= pnode.Attributes["BeginCode"].Value #>,<#= pnode.Attributes["EndCode"].Value #>]==
+
+statusCode 值 | 消息内容 | 错误说明 | Exception 类名
+---|---|---|---
+<#+ foreach (XmlNode node in pnode.SelectNodes("StateCode")) { #>
+<#= node.Attributes["Value"].Value #>|<#= node.Attributes["Msg"].Value #>|<#= node.Attributes["Comment"].Value #>|<#= node.Attributes["Name"].Value #>Exception
+<#+ }#>
+
+<#+ }#>
+<#+  
+        return this.GenerationEnvironment.ToString();
+    }
+}
+#>

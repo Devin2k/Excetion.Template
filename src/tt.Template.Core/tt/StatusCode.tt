@@ -1,0 +1,39 @@
+<#@ template debug="true" hostSpecific="true" language="C#"#>
+<#@ assembly name="System.Xml.dll" #>
+<#@ assembly name="EnvDTE" #>
+<#@ include file="T4Toolbox.tt" #>
+<#@ import namespace="System.Xml" #>
+<#@ include file="StatusCodeGenerator.ttinclude" #>
+<#
+/* 项目配置集合*/
+string exceptionNamespace="tt.Template.Core.Exceptions";  /* 项目异常配置命名空间*/
+string exceptionSuperClassName="BusinessException";    
+string enumNamespace="tt.Template.Core";   /* 项目异常配置命名空间*/
+string enumClassName="BusinessStatusCode";
+/* 以下内容基本不用修改*/
+	EnvDTE.DTE dte = (EnvDTE.DTE) ((IServiceProvider) this.Host).GetService(typeof(EnvDTE.DTE));    
+	string xmlFile = System.IO.Path.Combine(dte.ActiveDocument.Path, "../StatusCode.xml");
+    XmlDocument xmlDoc = new XmlDocument();
+    if(!System.IO.File.Exists(xmlFile))
+           return "";
+    xmlDoc.Load(xmlFile);
+	var nodes = xmlDoc.SelectNodes("//StateCode");
+	var pnodes = xmlDoc.SelectNodes("//Segment");
+    var generatorMultipleFile = new StatusCodeMultipleFileGenerator();
+	generatorMultipleFile.Nodes = nodes;
+	generatorMultipleFile.Namespace=exceptionNamespace;
+	generatorMultipleFile.SuperClassName=exceptionSuperClassName;
+	generatorMultipleFile.Title=xmlDoc.DocumentElement.Attributes["Comment"]?.Value??"";
+	generatorMultipleFile.EnumName=enumClassName;
+    generatorMultipleFile.Run();
+
+    var generatorSingleFile = new StatusCodeSingleFileGenerator();
+	generatorSingleFile.pNodes = pnodes;
+    generatorSingleFile.Nodes = nodes;
+    generatorSingleFile.EnumNamespace=enumNamespace;
+    generatorSingleFile.EnumName=enumClassName;
+	generatorSingleFile.ExceptionNamespace=exceptionNamespace;
+	generatorSingleFile.SuperClassName=exceptionSuperClassName;
+	generatorSingleFile.Title=xmlDoc.DocumentElement.Attributes["Comment"]?.Value??"";
+	generatorSingleFile.Run();
+#>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<StatusCode Comment="异常XML">
+  <Segment Name="测试异常1" BeginCode="12000" EndCode="13000" Comment="测试异常1范围">
+    <StateCode Name="Demo1Error" Value="12001" HasParameters="false" Msg="异常1无参构造异常" Comment="异常1,无参构造异常"/>
+    <StateCode Name="UserAuthorityError" Value="12002" HasParameters="true" Msg="用户:{0}权限不足" Comment="该用户没有这个权限"/>
+  </Segment>
+  <Segment Name="测试异常2" BeginCode="13000" EndCode="14000" Comment="测试异常2范围">
+    <StateCode Name="Demo2Error" Value="12001" HasParameters="false" Msg="异常2,无参构造异常" Comment="异常1,无参构造异常"/>
+   
+  </Segment>
+</StatusCode>

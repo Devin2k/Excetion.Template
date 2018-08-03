@@ -1,0 +1,62 @@
+﻿<#@ Assembly Name="System.Core" #>
+<#@ import namespace="System" #>
+<#+
+public class StatusCodeExceptionTemplate : Template
+{
+    public bool HasParameters;
+	public string ClassName;
+	public string CodeName;
+	public string Comment;
+	public string Namespace;
+	public string SuperClassName;
+	public String EnumName;
+
+    public override string TransformText()
+    {
+#>
+using System;
+
+namespace <#= Namespace #>
+{
+    /// <summary>
+    /// <#= Comment #>的异常
+    /// </summary>
+    public class <#= ClassName #> : <#= SuperClassName #>
+    {
+	<#+ if(HasParameters) { #>
+	    /// <summary>
+        /// 初始化<see cref="<#= ClassName #>"/>类的新实例。
+        /// </summary>
+		/// <param name="parameters">格式化参数</param>
+        public <#= ClassName #>(params string[] parameters)
+            : base(<#= EnumName #>.<#= CodeName #>,parameters) { }
+
+	    /// <summary>
+        /// 初始化<see cref="<#= ClassName #>"/>类的新实例。
+        /// </summary>
+        /// <param name="excep">异常</param>
+        public <#= ClassName #>(Exception excep,params string[] parameters)
+            : base(<#= EnumName #>.<#= CodeName #>, excep,parameters) { }
+
+	<#+ } else {#>
+
+	    /// <summary>
+        /// 初始化<see cref="<#= ClassName #>"/>类的新实例。
+        /// </summary>
+        public <#= ClassName #>()
+            : base(<#= EnumName #>.<#= CodeName #>) { }
+
+        /// <summary>
+        /// 初始化<see cref="<#= ClassName #>"/>类的新实例。
+        /// </summary>
+        /// <param name="excep">异常</param>
+        public <#= ClassName #>(Exception excep)
+            : base(<#= EnumName #>.<#= CodeName #>, excep) { }
+	<#+} #>
+    }
+}
+<#+  
+        return this.GenerationEnvironment.ToString();
+    }
+}
+#>

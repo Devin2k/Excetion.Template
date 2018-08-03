@@ -1,0 +1,66 @@
+﻿<#@ import namespace="System.Xml" #>
+<#@ assembly name="System.Xml.dll" #>
+<#@ assembly name="EnvDTE" #>
+<#@ include file="StatusCodeExceptionTemplate.ttinclude" #>
+<#@ include file="StatusCodeMarkDownTemplate.ttinclude" #>
+<#@ include file="StatusCodeEnumTemplate.ttinclude" #>
+<#@ include file="StatusCodeSuperExceptionTemplate.ttinclude" #>
+<#+
+public class StatusCodeMultipleFileGenerator : Generator
+{
+    public System.Xml.XmlNodeList Nodes;
+	public String Namespace;
+	public String Title;
+	public String SuperClassName ="Exception";
+	public String EnumName;
+	
+	protected override void RunCore()
+	{
+
+	    var _template = new StatusCodeExceptionTemplate();
+        foreach(XmlNode node in Nodes)
+        {
+            _template.HasParameters = bool.Parse(node.Attributes["HasParameters"].Value); 
+			_template.ClassName = node.Attributes["Name"].Value+"Exception";    
+			_template.CodeName = node.Attributes["Name"].Value;    
+			_template.Comment = node.Attributes["Comment"].Value;    
+			_template.Namespace = this.Namespace;
+			_template.EnumName = this.EnumName;
+			_template.SuperClassName = this.SuperClassName;
+            _template.RenderToFile("../Exceptions/"+_template.ClassName+".cs"); 
+        }
+	}
+}
+
+public class StatusCodeSingleFileGenerator : Generator
+{
+    public System.Xml.XmlNodeList Nodes;
+	public String EnumNamespace;
+	public String ExceptionNamespace;
+	public String EnumName;
+	public String Title;
+	public String SuperClassName ="Exception";
+	public System.Xml.XmlNodeList pNodes;
+
+	protected override void RunCore()
+	{
+	    var _templateEnum = new StatusCodeEnumTemplate();
+		_templateEnum.Nodes = this.Nodes;
+		_templateEnum.Namespace = this.EnumNamespace;
+		_templateEnum.EnumName = this.EnumName;
+        _templateEnum.RenderToFile("../"+this.EnumName+".cs"); 
+
+		var _templateSuperException = new StatusCodeSuperExceptionTemplate();
+        _templateSuperException.ClassName = this.SuperClassName;    
+		_templateSuperException.Namespace = this.ExceptionNamespace??EnumNamespace+".Exceptions";
+		_templateSuperException.EnumName = this.EnumName;
+        _templateSuperException.RenderToFile("../Exceptions/"+this.SuperClassName+".cs"); 
+
+		var _templateMarkDown = new StatusCodeMarkDownTemplate();
+		_templateMarkDown.pNodes= this.pNodes;
+		_templateMarkDown.Nodes = this.Nodes;
+		_templateMarkDown.Title = this.Title;
+        _templateMarkDown.RenderToFile("../"+this.EnumName+".md"); 
+	}
+}
+#>
